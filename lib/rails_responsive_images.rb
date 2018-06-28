@@ -30,10 +30,13 @@ ActionView::Helpers::AssetTagHelper.module_eval do
     skip_pipeline = options.delete(:skip_pipeline)
 
     options[:src] = resolve_image_source(source, skip_pipeline)
-    original_file = source.sub(/^\/assets/, '')
+
+    original_dir = File.dirname(source)
+    original_file = File.basename(source, ".*")
+    original_ext = File.extname(source)
 
     options[:srcset] = RailsResponsiveImages.configuration.image_sizes.map do |size|
-      src_path = path_to_image("responsive_images_#{size}/#{original_file}", skip_pipeline: skip_pipeline)
+      src_path = path_to_image("#{original_dir}/#{original_file}_responsive_images_#{size}#{original_ext}", skip_pipeline: skip_pipeline)
       "#{src_path} #{size}w"
     end.join(", ")
 

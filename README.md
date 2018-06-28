@@ -5,7 +5,7 @@ A Rails `image_tag()` extension to generate HTML5 `<img>` tag using `srcset`. To
 
 The following image_tag
 ```ruby
-= image_tag 'awesome/picture.jpeg', alt: 'awesome', responsive: true
+= image_tag_with_responsiveness 'awesome/picture.jpeg', alt: 'awesome'
 ```
 will generate this output:
 ```html
