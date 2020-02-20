@@ -1,5 +1,4 @@
 require "rails_responsive_images"
-require "byebug"
 
 desc "Rails responsive images builds different sized versions from your images inside of the asset folder"
 task rails_responsive_images: [ 'rails_responsive_images:check_requirements', 'rails_responsive_images:resize' ]
@@ -16,26 +15,21 @@ namespace :rails_responsive_images do
   end
 
   task resize: :environment do
-
     RakeFileUtils.verbose(false)
+
     start_time = Time.now
 
-    # file_list = ::FileList.new(Rails.root.join('app', 'assets', 'images/**/*.{gif,jpeg,jpg,png}').to_s) do |f|
-    #   f.exclude(/(responsive_images_)\d+/)
-    # end
-
-    file_list = Rails.application
-      .precompiled_assets
-      .select { |file| file =~ /\.(?:jpeg|jpg|png)$/ }
-      .reject { |file| file =~ /responsive_images_/ }
-
-    byebug
+    file_list = RailsResponsiveImages.configuration.images
 
     puts "\nResize #{ file_list.size } image files."
 
+    store = Rails.application.assets || Sprockets::Railtie.build_environment(Rails.application, true)
+
     RailsResponsiveImages.configuration.image_sizes.each do |size|
       file_list.to_a.each do |filepath|
-        resolved_filepath = Rails.application.assets[filepath].pathname.to_s
+        puts "Precompiling #{filepath}..."
+
+        resolved_filepath = store[filepath].pathname.to_s
 
         original_dir = File.dirname(resolved_filepath)
         original_file = File.basename(resolved_filepath, ".*")

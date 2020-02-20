@@ -50,7 +50,7 @@ image_sizes  = [360, 576, 768, 992, 1200, 1600]
 
 Add the responsive flag on image_tag helper
 ```ruby
-= image_tag 'awesome/picture.jpeg', alt: 'awesome', responsive: true
+= image_tag_with_responsiveness 'awesome/picture.jpeg', alt: 'awesome'
 ```
 
 ## Capistrano - Integration

@@ -21,13 +21,33 @@ module RailsResponsiveImages
   end
 end
 
-
 ActionView::Helpers::AssetTagHelper.module_eval do
-
   def image_tag_with_responsiveness(source, options = {})
     options = options.symbolize_keys
     check_for_image_tag_errors(options)
     skip_pipeline = options.delete(:skip_pipeline)
+
+    debug = Rails.application.config.assets.debug
+
+    if debug && !RailsResponsiveImages.configuration.images.include?(source)
+      raise "Image '#{source}' is not a responsive image. Review RailsResponsiveImages the configuration"
+    end
+
+    if debug
+      RailsResponsiveImages.configuration.image_sizes.each do |size|
+        resolved_filepath = Rails.application.assets[source].pathname.to_s
+
+        original_dir = File.dirname(resolved_filepath)
+        original_file = File.basename(resolved_filepath, ".*")
+        original_ext = File.extname(resolved_filepath)
+
+        responsive_filepath = Rails.root.join(original_dir, "#{original_file}_responsive_images_#{size}#{original_ext}").to_s
+
+        unless File.exist?(responsive_filepath)
+          RailsResponsiveImages::Image.instance.generate_responsive_image!(resolved_filepath, size, responsive_filepath)
+        end
+      end
+    end
 
     options[:src] = resolve_image_source(source, skip_pipeline)
 
