@@ -27,7 +27,7 @@ namespace :rails_responsive_images do
 
     RailsResponsiveImages.configuration.image_sizes.each do |size|
       file_list.to_a.each do |filepath|
-        puts "Precompiling #{filepath}..."
+        puts "Precompiling #{filepath} at #{size}..."
 
         resolved_filepath = store[filepath].pathname.to_s
 

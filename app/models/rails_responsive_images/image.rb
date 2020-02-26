@@ -13,6 +13,7 @@ module RailsResponsiveImages
 
     def generate_responsive_image!(original_image, size, output_path)
       img = MiniMagick::Image.open(original_image)
+      img.define('profile:skip=exif') # Idempotent resize
       img.resize size
       img.write output_path
       img.destroy!
